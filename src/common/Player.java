@@ -1,11 +1,13 @@
 package common;
 
+import common.enums.Direction;
+
 public class Player {
     private String id;
     private int x;
     private int y;
     private String state; // "idle", "move", "jump"
-    private String direction; // "left", "right"
+    private Direction direction;
 
     public String getId() {
         return id;
@@ -39,11 +41,15 @@ public class Player {
         this.state = state;
     }
 
-    public String getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(String direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = Direction.fromString(direction);
     }
 }

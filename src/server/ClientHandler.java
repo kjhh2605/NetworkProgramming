@@ -1,12 +1,16 @@
 package server;
 
-import common.dto.PlayerUpdateDTO;
+import common.Player;
+import common.enums.Direction;
+import common.skills.Skill;
+import common.skills.Skill1;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.UUID;
 
 public class ClientHandler implements Runnable {
 
@@ -30,8 +34,8 @@ public class ClientHandler implements Runnable {
 
             common.Player newPlayer = new common.Player();
             newPlayer.setId(this.playerId);
-            newPlayer.setX(50); // Default starting position
-            newPlayer.setY(200);
+            newPlayer.setX(50);
+            newPlayer.setY(500);
             gameState.addPlayer(newPlayer);
             System.out.println("Player " + this.playerId + " connected.");
 
@@ -43,24 +47,9 @@ public class ClientHandler implements Runnable {
             while ((inputLine = in.readLine()) != null) {
                 System.out.println("Received from " + playerId + ": " + inputLine);
                 if (inputLine.contains("\"type\":\"PLAYER_UPDATE\"")) {
-                    try {
-                        String payload = inputLine.substring(inputLine.indexOf("payload\":{") + 10, inputLine.lastIndexOf("}"));
-                        String[] parts = payload.split(",");
-                        int x = Integer.parseInt(parts[0].split(":")[1]);
-                        int y = Integer.parseInt(parts[1].split(":")[1]);
-                        String state = parts[2].split(":")[1].replace("\"", "");
-                        String direction = parts[3].split(":")[1].replace("\"", "");
-
-                        common.dto.PlayerUpdateDTO dto = new common.dto.PlayerUpdateDTO();
-                        dto.setX(x);
-                        dto.setY(y);
-                        dto.setState(state);
-                        dto.setDirection(direction);
-                        gameState.updatePlayer(playerId, dto);
-                    } catch (Exception e) {
-                        System.err.println("Failed to parse PLAYER_UPDATE: " + inputLine);
-                        e.printStackTrace();
-                    }
+                    handlePlayerUpdate(inputLine);
+                } else if (inputLine.contains("\"type\":\"SKILL_USE\"")) {
+                    handleSkillUse(inputLine);
                 }
             }
 
@@ -70,6 +59,41 @@ public class ClientHandler implements Runnable {
             gameState.removePlayer(this.playerId);
             closeResources();
         }
+    }
+
+    private void handlePlayerUpdate(String message) {
+        MessageParser.PlayerUpdateData data = MessageParser.parsePlayerUpdate(message);
+        if (data != null) {
+            common.dto.PlayerUpdateDTO dto = new common.dto.PlayerUpdateDTO();
+            dto.setX(data.x);
+            dto.setY(data.y);
+            dto.setState(data.state);
+            dto.setDirection(data.direction);
+            gameState.updatePlayer(playerId, dto);
+        }
+    }
+
+    private void handleSkillUse(String message) {
+        MessageParser.SkillUseData data = MessageParser.parseSkillUse(message);
+        if (data == null) return;
+
+        Player player = gameState.getPlayer(playerId);
+        if (player != null) {
+            String skillId = "skill_" + UUID.randomUUID().toString();
+            Skill skill = createSkill(data.skillType, skillId, player);
+
+            if (skill != null) {
+                gameState.addSkill(skill);
+                System.out.println("Player " + playerId + " used " + data.skillType + " in direction: " + data.direction);
+            }
+        }
+    }
+
+    private Skill createSkill(String skillType, String skillId, Player player) {
+        if ("skill1".equals(skillType)) {
+            return new Skill1(skillId, playerId, player.getX(), player.getY(),player.getDirection());
+        }
+        return null;
     }
 
     public void sendMessage(String message) {

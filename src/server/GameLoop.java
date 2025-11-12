@@ -19,11 +19,15 @@ public class GameLoop implements Runnable {
         slime.setType("slime");
         slime.setX(100);
         slime.setY(200);
-        slime.setDirection("right");
+        slime.setDirection(common.enums.Direction.RIGHT);
         gameState.addMonster(slime);
 
         while (running) {
-            updateGame();
+            try {
+                updateGame();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             broadcastState();
             try {
                 Thread.sleep(16); // ~60 FPS
@@ -35,58 +39,40 @@ public class GameLoop implements Runnable {
         }
     }
 
-    private void updateGame() {
+    private void updateGame() throws InterruptedException {
         // Simple monster movement logic
         for (common.Monster monster : gameState.getAllMonsters()) {
             int currentX = monster.getX();
-            if ("right".equals(monster.getDirection())) {
+            if (common.enums.Direction.RIGHT.equals(monster.getDirection())) {
                 if (currentX > 300) {
-                    monster.setDirection("left");
+                    monster.setDirection(common.enums.Direction.LEFT);
                     monster.setX(currentX - 1);
                 } else {
                     monster.setX(currentX + 1);
                 }
-            } else { // "left"
+            } else { // LEFT
                 if (currentX < 50) {
-                    monster.setDirection("right");
+                    monster.setDirection(common.enums.Direction.RIGHT);
                     monster.setX(currentX + 1);
                 } else {
                     monster.setX(currentX - 1);
                 }
             }
         }
+
+        // Update skills
+        gameState.updateSkills();
     }
 
     private void broadcastState() {
-        // This needs a proper JSON library like Gson, but we'll build a string for now.
-        String gameStateJson = buildGameStateJson();
+        String gameStateJson = GameStateSerializer.toJson(
+            gameState.getAllPlayers(),
+            gameState.getAllMonsters(),
+            gameState.getAllSkills()
+        );
         for (ClientHandler client : clients) {
             client.sendMessage(gameStateJson);
         }
-    }
-
-    private String buildGameStateJson() {
-        // Manual JSON building - replace with a library later
-        StringBuilder sb = new StringBuilder();
-        sb.append("{\"type\":\"GAME_STATE\",\"payload\":{");
-        sb.append("\"players\":[");
-        for (common.Player p : gameState.getAllPlayers()) {
-            sb.append(String.format("{\"id\":\"%s\",\"x\":%d,\"y\":%d}", p.getId(), p.getX(), p.getY()));
-            sb.append(",");
-        }
-        if (!gameState.getAllPlayers().isEmpty()) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        sb.append("],\"monsters\":[");
-        for (common.Monster m : gameState.getAllMonsters()) {
-            sb.append(String.format("{\"id\":\"%s\",\"type\":\"%s\",\"x\":%d,\"y\":%d}", m.getId(), m.getType(), m.getX(), m.getY()));
-            sb.append(",");
-        }
-        if (!gameState.getAllMonsters().isEmpty()) {
-            sb.deleteCharAt(sb.length() - 1);
-        }
-        sb.append("]}}");
-        return sb.toString();
     }
 
     public void stop() {

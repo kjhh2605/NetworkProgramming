@@ -2,7 +2,7 @@ package server;
 
 import common.Monster;
 import common.Player;
-import common.dto.PlayerUpdateDTO;
+import common.skills.Skill;
 
 import java.util.List;
 import java.util.Map;
@@ -12,10 +12,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class GameState {
     private final Map<String, Player> players;
     private final List<Monster> monsters;
+    private final List<Skill> skills;
 
     public GameState() {
         this.players = new ConcurrentHashMap<>();
         this.monsters = new CopyOnWriteArrayList<>();
+        this.skills = new CopyOnWriteArrayList<>();
     }
 
     public void addPlayer(Player player) {
@@ -54,6 +56,27 @@ public class GameState {
 
     public List<Monster> getAllMonsters() {
         return this.monsters;
+    }
+
+    public void addSkill(Skill skill) {
+        skills.add(skill);
+    }
+
+    public void removeSkill(String skillId) {
+        skills.removeIf(s -> s.getId().equals(skillId));
+    }
+
+    public List<Skill> getAllSkills() {
+        return this.skills;
+    }
+
+    public void updateSkills() throws InterruptedException {
+        // 모든 스킬 업데이트
+        for (Skill skill : skills) {
+            skill.update();
+        }
+        // 비활성화된 스킬 제거
+        skills.removeIf(s -> !s.isActive());
     }
 }
 

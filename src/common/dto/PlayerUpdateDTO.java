@@ -1,10 +1,12 @@
 package common.dto;
 
+import common.enums.Direction;
+
 public class PlayerUpdateDTO {
     private int x;
     private int y;
     private String state;
-    private String direction;
+    private Direction direction;
 
     public int getX() {
         return x;
@@ -30,11 +32,15 @@ public class PlayerUpdateDTO {
         this.state = state;
     }
 
-    public String getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(String direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = Direction.fromString(direction);
     }
 }
