@@ -27,6 +27,20 @@ public class GameStateParser {
         }
     }
 
+    public static String parseBackgroundImagePath(String jsonState) {
+        try {
+            if (jsonState.contains("\"map\":{")) {
+                String mapJson = jsonState.split("\"map\":\\{")[1].split("\\}")[0];
+                if (mapJson.contains("\"backgroundImagePath\":\"")) {
+                    return mapJson.split("\"backgroundImagePath\":\"")[1].split("\"")[0];
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to parse background image path: " + e.getMessage());
+        }
+        return null;
+    }
+
     private static void parsePlayers(String jsonState, List<Player> players) {
         players.clear();
         String playersJson = jsonState.split("\"players\":\\[")[1].split("\\]")[0];

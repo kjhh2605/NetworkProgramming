@@ -2,6 +2,8 @@ package common.monster;
 
 import common.enums.Direction;
 
+import java.util.Random;
+
 public class Monster {
     private String id;
     private String name;
@@ -11,6 +13,27 @@ public class Monster {
     private int y;
     private String state;
     private Direction direction;
+
+    public void move() {
+        // Simple monster movement logic
+        int currentX = getX();
+        if (Direction.RIGHT.equals(getDirection())) {
+            if (currentX > 300) {
+                setDirection(Direction.LEFT);
+                int dist = new Random().nextInt(10) + 1;
+                setX(currentX - dist);
+            } else {
+                setX(currentX + 1);
+            }
+        } else { // LEFT
+            if (currentX < 50) {
+                setDirection(Direction.RIGHT);
+                setX(currentX + 1);
+            } else {
+                setX(currentX - 1);
+            }
+        }
+    }
 
     public String getId() {
         return id;

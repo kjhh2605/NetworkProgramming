@@ -8,43 +8,45 @@ import common.monster.Monster;
 import common.player.Player;
 import common.skills.Skill;
 
-import javax.swing.JPanel;
-import javax.swing.Timer;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static common.ImagePath.*;
 
 public class GamePanel extends JPanel implements KeyListener, PlayerInputHandler.PlayerMovementCallback {
 
     private NetworkHandler networkHandler;
-    private String errorMessage = null;
-    private String myPlayerId = null;
-    private final List<Player> players = new CopyOnWriteArrayList<>();
-    private final List<Monster> monsters = new CopyOnWriteArrayList<>();
-    private final List<Skill> skills = new CopyOnWriteArrayList<>();
+    private String errorMessage;
+    private String myPlayerId;
+
+    private final List<Player> players;
+    private final List<Monster> monsters;
+    private final List<Skill> skills;
+    private String currentBackgroundImagePath;
     private BufferedImage background;
+
     private double velocityY = 0;
     private boolean isJumping = false;
     private static final double GRAVITY = 0.5;
     private static final double JUMP_STRENGTH = -12.0;
     private static final int GROUND_Y = 500;
 
-
     public GamePanel() {
+        this.players = new CopyOnWriteArrayList<>();
+        this.monsters = new CopyOnWriteArrayList<>();
+        this.skills = new CopyOnWriteArrayList<>();
+
         setPreferredSize(new Dimension(800, 600));
         setFocusable(true);
         addKeyListener(this);
 
         try {
-            background = ImageIO.read(new File(BACKGROUND_IMAGE_PATH));
             SpriteManager.loadSprites();
             networkHandler = new NetworkHandler(this, "localhost", 12345);
             new Thread(networkHandler).start();
@@ -87,7 +89,23 @@ public class GamePanel extends JPanel implements KeyListener, PlayerInputHandler
 
     public void updateGameState(String jsonState) {
         GameStateParser.parseAndUpdate(jsonState, players, monsters, skills);
+        String newBgPath = GameStateParser.parseBackgroundImagePath(jsonState);
+        if (newBgPath != null) {
+            setBackgroundImage(newBgPath);
+        }
         this.errorMessage = null;
+    }
+
+    public void setBackgroundImage(String path) {
+        if (path != null && !path.equals(currentBackgroundImagePath)) {
+            try {
+                this.background = ImageIO.read(new File(path));
+                this.currentBackgroundImagePath = path;
+                repaint();
+            } catch (IOException e) {
+                System.err.println("Failed to load background image: " + path);
+            }
+        }
     }
 
     public void showError(String message) {

@@ -3,5 +3,5 @@ package common;
 public class ImagePath {
     public static final String PLAYER_IMAGE_PATH = "../img/character.jpeg";
     public static final String GREEN_SLIME_IMAGE_PATH = "../img/green_slime.gif";
-    public static final String BACKGROUND_IMAGE_PATH = "../img/헤네시스.png";
+    public static final String HENNESSIS_IMAGE_PATH = "../img/헤네시스.png";
 }

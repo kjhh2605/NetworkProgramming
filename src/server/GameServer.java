@@ -3,7 +3,7 @@ package server;
 import server.core.GameLoop;
 import server.core.GameState;
 import server.handler.ClientHandler;
-import server.map.Hennessis;
+import server.map.MapCreator;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,7 +17,7 @@ public class GameServer {
     private final List<ClientHandler> clients;
 
     public GameServer() {
-        gameState = new Hennessis();
+        gameState = new GameState(MapCreator.Hennessis());
         clients = new CopyOnWriteArrayList<>();
         gameLoop = new GameLoop(gameState, clients);
     }

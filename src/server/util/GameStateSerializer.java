@@ -3,13 +3,16 @@ package server.util;
 import common.monster.Monster;
 import common.player.Player;
 import common.skills.Skill;
+import server.map.GameMap;
+
 import java.util.List;
 
 public class GameStateSerializer {
 
-    public static String toJson(List<Player> players, List<Monster> monsters, List<Skill> skills) {
+    public static String toJson(GameMap map, List<Player> players, List<Monster> monsters, List<Skill> skills) {
         StringBuilder sb = new StringBuilder();
         sb.append("{\"type\":\"GAME_STATE\",\"payload\":{");
+        appendMapInfo(sb, map);
         appendPlayers(sb, players);
         appendMonsters(sb, monsters);
         appendSkills(sb, skills);
@@ -17,8 +20,14 @@ public class GameStateSerializer {
         return sb.toString();
     }
 
+    private static void appendMapInfo(StringBuilder sb, GameMap map) {
+        sb.append("\"map\":{");
+        sb.append(String.format("\"backgroundImagePath\":\"%s\"", map.getBackgroundImagePath().replace("\\", "/")));
+        sb.append("}");
+    }
+
     private static void appendPlayers(StringBuilder sb, List<Player> players) {
-        sb.append("\"players\":[");
+        sb.append(",\"players\":[");
         for (Player p : players) {
             sb.append(String.format("{\"id\":\"%s\",\"x\":%d,\"y\":%d}",
                 p.getId(), p.getX(), p.getY()));

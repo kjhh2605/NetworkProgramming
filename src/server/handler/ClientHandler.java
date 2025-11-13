@@ -2,7 +2,6 @@ package server.handler;
 
 import common.player.Player;
 import common.skills.Skill;
-import common.skills.Skill1;
 import server.core.GameState;
 import server.util.MessageParser;
 
@@ -48,11 +47,11 @@ public class ClientHandler implements Runnable {
 
             String inputLine;
             while ((inputLine = in.readLine()) != null) {
-                System.out.println("Received from " + playerId + ": " + inputLine);
                 if (inputLine.contains("\"type\":\"PLAYER_UPDATE\"")) {
                     handlePlayerUpdate(inputLine);
                 } else if (inputLine.contains("\"type\":\"SKILL_USE\"")) {
                     handleSkillUse(inputLine);
+                    System.out.println(playerId + ": "+ inputLine);
                 }
             }
 

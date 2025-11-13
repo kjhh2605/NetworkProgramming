@@ -19,15 +19,6 @@ public class MessageParser {
         }
     }
 
-    public static String parseSkillType(String message) {
-        try {
-            return message.split("\"skillType\":\"")[1].split("\"")[0];
-        } catch (Exception e) {
-            System.err.println("Failed to parse SKILL_USE: " + message);
-            return null;
-        }
-    }
-
     public static SkillUseData parseSkillUse(String message) {
         try {
             String skillType = message.split("\"skillType\":\"")[1].split("\"")[0];

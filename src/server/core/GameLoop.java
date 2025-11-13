@@ -1,10 +1,7 @@
 package server.core;
 
-import common.monster.Monster;
 import server.handler.ClientHandler;
 import server.util.GameStateSerializer;
-
-import java.util.Random;
 
 public class GameLoop implements Runnable {
 
@@ -42,36 +39,12 @@ public class GameLoop implements Runnable {
     }
 
     private void updateGame() throws InterruptedException {
-        // 몬스터 자동 관리 (부족하면 생성)
-        gameState.manageMonsters();
-
-        // Simple monster movement logic
-        for (Monster monster : gameState.getAllMonsters()) {
-            int currentX = monster.getX();
-            if (common.enums.Direction.RIGHT.equals(monster.getDirection())) {
-                if (currentX > 300) {
-                    monster.setDirection(common.enums.Direction.LEFT);
-                    int dist = new Random().nextInt(10) + 1;
-                    monster.setX(currentX - dist);
-                } else {
-                    monster.setX(currentX + 1);
-                }
-            } else { // LEFT
-                if (currentX < 50) {
-                    monster.setDirection(common.enums.Direction.RIGHT);
-                    monster.setX(currentX + 1);
-                } else {
-                    monster.setX(currentX - 1);
-                }
-            }
-        }
-
-        // Update skills
-        gameState.updateSkills();
+        gameState.update();
     }
 
     private void broadcastState() {
         String gameStateJson = GameStateSerializer.toJson(
+            gameState.getCurrentMap(),
             gameState.getAllPlayers(),
             gameState.getAllMonsters(),
             gameState.getAllSkills()

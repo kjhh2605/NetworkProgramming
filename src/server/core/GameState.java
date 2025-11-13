@@ -3,34 +3,29 @@ package server.core;
 import common.monster.Monster;
 import common.player.Player;
 import common.skills.Skill;
+import server.map.GameMap;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-//todo : 맵별로 분리 -> 일단으 하나로
-public abstract class GameState {
-    private final String backgroundImagePath;
+public class GameState {
 
     private final Map<String, Player> players;
-    private final List<Monster> monsters;
-    private int maxMonsterCnt;
     private final List<Skill> skills;
+    private GameMap currentMap;
 
-    public GameState(String backgroundImagePath) {
-        this.backgroundImagePath = backgroundImagePath;
+    public GameState(GameMap initialMap) {
+        this.currentMap = initialMap;
         this.players = new ConcurrentHashMap<>();
-        this.monsters = new CopyOnWriteArrayList<>();
         this.skills = new CopyOnWriteArrayList<>();
-        this.maxMonsterCnt = 20; // 기본값 20으로 설정
     }
 
-    /**
-     * 각 맵에서 생성할 몬스터를 정의하는 추상 메서드
-     * @return 생성된 몬스터 객체
-     */
-    protected abstract Monster createMonster();
+    public void update() throws InterruptedException {
+        currentMap.update();
+        updateSkills();
+    }
 
     public void addPlayer(Player player) {
         players.put(player.getId(), player);
@@ -58,22 +53,8 @@ public abstract class GameState {
         return new CopyOnWriteArrayList<>(players.values());
     }
 
-    public void setMaxMonsterCnt(int maxMonsterCnt) {
-        this.maxMonsterCnt = maxMonsterCnt;
-    }
-    public int getMaxMonsterCnt(){
-        return this.maxMonsterCnt;
-    }
-    public void addMonster(Monster monster) {
-        monsters.add(monster);
-    }
-
-    public void removeMonster(String monsterId) {
-        monsters.removeIf(m -> m.getName().equals(monsterId));
-    }
-
     public List<Monster> getAllMonsters() {
-        return this.monsters;
+        return currentMap.getMonsters();
     }
 
     public void addSkill(Skill skill) {
@@ -89,27 +70,18 @@ public abstract class GameState {
     }
 
     public void updateSkills() throws InterruptedException {
-        // 모든 스킬 업데이트
         for (Skill skill : skills) {
             skill.update();
         }
-        // 비활성화된 스킬 제거
         skills.removeIf(s -> !s.isActive());
     }
 
-    /**
-     * 몬스터를 자동으로 관리하는 메서드
-     * 현재 몬스터 수가 최대 수보다 적으면 자동으로 생성
-     */
-    public void manageMonsters() {
-        int currentMonsterCount = monsters.size();
-        // 몬스터가 부족하면 최대 수까지 생성
-        while (currentMonsterCount < maxMonsterCnt) {
-            Monster newMonster = createMonster();
-            addMonster(newMonster);
-            currentMonsterCount++;
-            System.out.println("몬스터가 생성되었스빈다/");
-        }
+    public GameMap getCurrentMap() {
+        return currentMap;
+    }
+
+    public void setCurrentMap(GameMap newMap) {
+        this.currentMap = newMap;
     }
 }
 
