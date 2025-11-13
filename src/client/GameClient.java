@@ -1,5 +1,7 @@
 package client;
 
+import client.view.GameFrame;
+
 import javax.swing.SwingUtilities;
 
 public class GameClient {

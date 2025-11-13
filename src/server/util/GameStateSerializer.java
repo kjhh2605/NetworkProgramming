@@ -1,7 +1,7 @@
-package server;
+package server.util;
 
-import common.Monster;
-import common.Player;
+import client.model.Monster;
+import client.model.Player;
 import common.skills.Skill;
 import java.util.List;
 

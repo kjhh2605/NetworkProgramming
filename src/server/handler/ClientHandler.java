@@ -1,9 +1,10 @@
-package server;
+package server.handler;
 
-import common.Player;
-import common.enums.Direction;
+import client.model.Player;
 import common.skills.Skill;
 import common.skills.Skill1;
+import server.core.GameState;
+import server.util.MessageParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -32,7 +33,7 @@ public class ClientHandler implements Runnable {
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
 
-            common.Player newPlayer = new common.Player();
+            Player newPlayer = new Player();
             newPlayer.setId(this.playerId);
             newPlayer.setX(50);
             newPlayer.setY(500);

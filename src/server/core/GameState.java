@@ -1,7 +1,7 @@
-package server;
+package server.core;
 
-import common.Monster;
-import common.Player;
+import client.model.Monster;
+import client.model.Player;
 import common.skills.Skill;
 
 import java.util.List;
@@ -9,15 +9,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+//todo : 맵별로 분리 -> 일단으 하나로
 public class GameState {
     private final Map<String, Player> players;
     private final List<Monster> monsters;
     private final List<Skill> skills;
-
+    private int maxMonsterCnt;
     public GameState() {
         this.players = new ConcurrentHashMap<>();
         this.monsters = new CopyOnWriteArrayList<>();
         this.skills = new CopyOnWriteArrayList<>();
+        this.maxMonsterCnt = 20; // 기본값 20으로 설정
     }
 
     public void addPlayer(Player player) {
@@ -46,6 +48,12 @@ public class GameState {
         return new CopyOnWriteArrayList<>(players.values());
     }
 
+    public void setMaxMonsterCnt(int maxMonsterCnt) {
+        this.maxMonsterCnt = maxMonsterCnt;
+    }
+    public int getMaxMonsterCnt(){
+        return this.maxMonsterCnt;
+    }
     public void addMonster(Monster monster) {
         monsters.add(monster);
     }

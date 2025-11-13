@@ -1,27 +1,14 @@
-package common.dto;
+package client.model;
 
 import common.enums.Direction;
 
-public class SkillDTO {
+public class Monster {
     private String id;
-    private String playerId;
     private String type;
     private int x;
     private int y;
+    private String state;
     private Direction direction;
-    private boolean active;
-
-    public SkillDTO() {}
-
-    public SkillDTO(String id, String playerId, String type, int x, int y, Direction direction, boolean active) {
-        this.id = id;
-        this.playerId = playerId;
-        this.type = type;
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
-        this.active = active;
-    }
 
     public String getId() {
         return id;
@@ -29,14 +16,6 @@ public class SkillDTO {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(String playerId) {
-        this.playerId = playerId;
     }
 
     public String getType() {
@@ -63,6 +42,14 @@ public class SkillDTO {
         this.y = y;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
     public Direction getDirection() {
         return direction;
     }
@@ -73,13 +60,5 @@ public class SkillDTO {
 
     public void setDirection(String direction) {
         this.direction = Direction.fromString(direction);
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 }

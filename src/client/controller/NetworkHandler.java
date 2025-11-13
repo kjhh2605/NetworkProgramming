@@ -1,4 +1,6 @@
-package client;
+package client.controller;
+
+import client.view.GamePanel;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -20,11 +20,12 @@ public abstract class Skill {
     protected int traveledDistance;
     protected Image sprite;
 
-    public Skill(String id, String playerId, int x, int y) {
+    public Skill(String id, String playerId, int x, int y, Direction direction) {
         this.id = id;
         this.playerId = playerId;
         this.x = x;
         this.y = y;
+        this.direction = direction;
         this.active = true;
         this.traveledDistance = 0;
     }

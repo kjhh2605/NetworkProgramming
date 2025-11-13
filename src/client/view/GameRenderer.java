@@ -1,7 +1,8 @@
-package client;
+package client.view;
 
-import common.Monster;
-import common.Player;
+import client.util.SpriteManager;
+import client.model.Monster;
+import client.model.Player;
 import common.skills.Skill;
 
 import java.awt.Color;

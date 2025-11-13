@@ -1,4 +1,4 @@
-package client;
+package client.util;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+// 이미지 리소스 로드 & 저장 클래스
 public class SpriteManager {
 
     private static final String PLAYER_IMAGE_PATH = "../img/character.jpeg";

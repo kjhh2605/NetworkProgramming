@@ -1,4 +1,8 @@
-package server;
+package server.core;
+
+import client.model.Monster;
+import server.handler.ClientHandler;
+import server.util.GameStateSerializer;
 
 public class GameLoop implements Runnable {
 
@@ -13,14 +17,7 @@ public class GameLoop implements Runnable {
 
     @Override
     public void run() {
-        // Add a dummy monster for testing
-        common.Monster slime = new common.Monster();
-        slime.setId("slime1");
-        slime.setType("slime");
-        slime.setX(100);
-        slime.setY(200);
-        slime.setDirection(common.enums.Direction.RIGHT);
-        gameState.addMonster(slime);
+
 
         while (running) {
             try {
@@ -28,7 +25,10 @@ public class GameLoop implements Runnable {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
+            // 클라이언트에게 메세지 전송
             broadcastState();
+
             try {
                 Thread.sleep(16); // ~60 FPS
             } catch (InterruptedException e) {
@@ -41,7 +41,7 @@ public class GameLoop implements Runnable {
 
     private void updateGame() throws InterruptedException {
         // Simple monster movement logic
-        for (common.Monster monster : gameState.getAllMonsters()) {
+        for (Monster monster : gameState.getAllMonsters()) {
             int currentX = monster.getX();
             if (common.enums.Direction.RIGHT.equals(monster.getDirection())) {
                 if (currentX > 300) {
