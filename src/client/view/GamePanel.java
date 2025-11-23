@@ -225,6 +225,7 @@ public class GamePanel extends JPanel implements KeyListener, PlayerInputHandler
         put("skill1", 2000L);
         put("skill2", 3000L);
         put("skill3", 5000L);
+        put("skill4", 4000L);
     }};
 
     @Override
@@ -277,8 +278,11 @@ public class GamePanel extends JPanel implements KeyListener, PlayerInputHandler
         // Skill2 (W)
         renderSingleSkillCooldown(g, "skill2", "W", startX + spacing, y, size);
 
+        // Skill4 (E)
+        renderSingleSkillCooldown(g, "skill4", "E", startX + spacing * 2, y, size);
+
         // Skill3 (R)
-        renderSingleSkillCooldown(g, "skill3", "R", startX + spacing * 2, y, size);
+        renderSingleSkillCooldown(g, "skill3", "R", startX + spacing * 3, y, size);
     }
 
     private void renderSingleSkillCooldown(Graphics g, String skillType, String keyBind, int x, int y, int size) {

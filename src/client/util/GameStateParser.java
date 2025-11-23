@@ -7,6 +7,7 @@ import common.skills.Skill;
 import common.skills.Skill1;
 import common.skills.Skill2;
 import common.skills.Skill3;
+import common.skills.Skill4;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,6 +183,9 @@ public class GameStateParser {
                                 common.enums.Direction.fromString(direction));
                     } else if ("skill3".equals(type)) {
                         skill = new Skill3(id, playerId, x, y,
+                                common.enums.Direction.fromString(direction));
+                    } else if ("skill4".equals(type)) {
+                        skill = new Skill4(id, playerId, x, y,
                                 common.enums.Direction.fromString(direction));
                     }
 
